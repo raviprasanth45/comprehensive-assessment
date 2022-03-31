@@ -1,7 +1,10 @@
 package com.comprehensiveJava.springbootcrud.service;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+
+import javax.persistence.EntityExistsException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,31 +18,39 @@ public class EmployeeService {
 	private UserRepository repository;
 	
 	public Employee saveEmployee(Employee employee){ 
-		return repository.save(employee);
+		Employee storedDetails=repository.findById(employee.getId());
+				if(storedDetails!=null) throw new RuntimeException("Already exists");
+			return repository.save(employee);
 	}
-	public String existsEmployee(int id) throws Exception {
-		repository.existsById(id);
-		return "ID exits already !"+id;
-	}
-	public List<Employee> saveEmployees(List<Employee> employees) {
-		return repository.saveAll(employees);
-	}
-    public List<Employee> getEmployees(){
-    	return repository.findAll();
-    }
+	//public List<Employee> saveEmployees(List<Employee> employees) {
+		//return repository.saveAll(employees);
+	//}
+    //public List<Employee> getAllEmployees(){
+    	//return repository.findAll();
+    //}
     public Employee getEmployeeById(int id) {
-    	return repository.findById(id).orElse(null);
+    	return repository.findById(id);
     }
     public String deleteEmployee(int id) {
     	repository.deleteById(id);
     	return "Employee removed successfully !"+id;
     }
-    public Employee updateEmployee(Employee employee) {
-    	Employee existingEmployee=repository.findById(employee.getId()).orElse(null);
+   // public Employee updateEmployee(Employee employee) {
+    //	Employee existingEmployee=repository.findById(employee.getId()).orElse(null);
+    	//existingEmployee.getId()employee;
     	//existingEmployee.setName(employee.getName());
-    	existingEmployee.setSalary(employee.getSalary());
+    	//existingEmployee.setSalary(employee.getSalary());
     	//existingEmployee.setDesignation(employee.getDesignation());
-    	return repository.save(existingEmployee);
+    	//return repository.save(existingEmployee);
     	
-    }
+    //}
+	public Employee updateEmployeeSal(Employee employee,int id, double salary) {
+		Employee existingEmployee=repository.findById(employee.getId());
+		existingEmployee.setSalary(employee.getSalary());
+		return repository.save(existingEmployee);
+	}
+	public List<Employee> getAllEmployees() {
+		return repository.findAll();
+	}
 }
+
